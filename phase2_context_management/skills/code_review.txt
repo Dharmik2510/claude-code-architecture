@@ -1,0 +1,31 @@
+SKILL: Code Review
+
+When reviewing code, follow this structured approach:
+
+1. CORRECTNESS
+   - Does the logic match the stated intent?
+   - Are edge cases handled (empty inputs, None, overflow)?
+   - Are error paths handled explicitly?
+
+2. SECURITY
+   - Check for SQL injection, path traversal, command injection
+   - Verify that user inputs are validated before use
+   - Check that secrets/credentials are not hardcoded or logged
+
+3. PERFORMANCE
+   - Identify O(n²) or worse operations that could be optimized
+   - Check for N+1 query patterns in database code
+   - Look for unnecessary re-computation inside loops
+
+4. READABILITY
+   - Are variable and function names descriptive?
+   - Is complex logic accompanied by comments?
+   - Are functions doing more than one thing?
+
+5. TESTS
+   - Are happy paths covered?
+   - Are failure paths covered?
+   - Are edge cases tested?
+
+Output format: one finding per line, prefixed with [CRITICAL], [WARNING], or [SUGGESTION].
+Always end with a one-sentence overall assessment.

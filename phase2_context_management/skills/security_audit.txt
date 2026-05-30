@@ -1,0 +1,23 @@
+SKILL: Security Audit
+
+When auditing code for security vulnerabilities, check the following:
+
+OWASP TOP 10 CHECKS
+- A01 Broken Access Control: verify authorization on every endpoint/function
+- A02 Cryptographic Failures: check for weak hashing (MD5, SHA1), unencrypted storage of sensitive data
+- A03 Injection: SQL, NoSQL, LDAP, OS command injection
+- A04 Insecure Design: missing rate limiting, missing input validation
+- A05 Security Misconfiguration: default credentials, verbose error messages, unnecessary services
+- A06 Vulnerable Components: flag any known-vulnerable library versions
+- A07 Auth Failures: insecure session tokens, improper logout, missing MFA
+- A08 Data Integrity Failures: unsigned serialization, unverified updates
+- A09 Logging Failures: sensitive data in logs, insufficient audit trail
+- A10 SSRF: user-controlled URLs fetched server-side without validation
+
+SEVERITY RATINGS
+- CRITICAL: exploitable with no prerequisites, immediate remediation required
+- HIGH: exploitable under common conditions
+- MEDIUM: requires specific conditions to exploit
+- LOW: best-practice improvement
+
+Output format: structured list with severity, location (file:line), description, and remediation for each finding.

@@ -1,0 +1,115 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" style="background:#09090f">
+  <defs>
+    <radialGradient id="gC" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#09090f" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="gf2"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="gf3"><feGaussianBlur stdDeviation="3"/></filter>
+    <marker id="arrowW" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto">
+      <path d="M0,0 L0,5 L7,2.5 z" fill="#00e5ff" opacity="0.6"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="630" fill="#09090f"/>
+  <ellipse cx="600" cy="280" rx="500" ry="300" fill="url(#gC)"/>
+
+  <!-- Grid -->
+  <g opacity="0.03" stroke="#00e5ff" stroke-width="0.5">
+    <line x1="0" y1="126" x2="1200" y2="126"/>
+    <line x1="0" y1="252" x2="1200" y2="252"/>
+    <line x1="0" y1="378" x2="1200" y2="378"/>
+    <line x1="0" y1="504" x2="1200" y2="504"/>
+    <line x1="150" y1="0" x2="150" y2="630"/>
+    <line x1="300" y1="0" x2="300" y2="630"/>
+    <line x1="450" y1="0" x2="450" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="750" y1="0" x2="750" y2="630"/>
+    <line x1="900" y1="0" x2="900" y2="630"/>
+    <line x1="1050" y1="0" x2="1050" y2="630"/>
+  </g>
+
+  <!-- COORDINATOR node (center top) -->
+  <rect x="480" y="90" width="240" height="70" rx="8" fill="#0a0f1a" stroke="#00e5ff" stroke-width="2" opacity="0.9"/>
+  <rect x="480" y="90" width="240" height="24" rx="8" fill="#0f1628"/>
+  <text x="600" y="107" text-anchor="middle" font-family="monospace" font-size="8" fill="#00e5ff" opacity="0.6" letter-spacing="3">COORDINATOR</text>
+  <text x="490" y="130" font-family="'Courier New', monospace" font-size="9" fill="#e2e8f0" opacity="0.5">task_graph.claim()</text>
+  <text x="490" y="148" font-family="'Courier New', monospace" font-size="9" fill="#e2e8f0" opacity="0.4">send_message(agents)</text>
+
+  <!-- Agent nodes: 4 specialists -->
+  <!-- Agent 1: Code Writer -->
+  <rect x="80" y="260" width="200" height="120" rx="8" fill="#0a0f1a" stroke="#7c3aed" stroke-width="1.5" opacity="0.9"/>
+  <rect x="80" y="260" width="200" height="22" rx="8" fill="#0f0a20"/>
+  <text x="180" y="276" text-anchor="middle" font-family="monospace" font-size="8" fill="#7c3aed" opacity="0.8" letter-spacing="2">CODE-WRITER</text>
+  <text x="94" y="300" font-family="monospace" font-size="8.5" fill="#e2e8f0" opacity="0.5">worktree: feature/auth</text>
+  <text x="94" y="316" font-family="monospace" font-size="8.5" fill="#e2e8f0" opacity="0.4">status: running</text>
+  <rect x="94" y="328" width="152" height="6" rx="3" fill="#1a2540"/>
+  <rect x="94" y="328" width="110" height="6" rx="3" fill="#7c3aed" opacity="0.7"/>
+  <text x="94" y="356" font-family="monospace" font-size="8" fill="#7c3aed" opacity="0.4">72% complete</text>
+
+  <!-- Agent 2: Code Reviewer -->
+  <rect x="340" y="260" width="200" height="120" rx="8" fill="#0a0f1a" stroke="#f59e0b" stroke-width="1.5" opacity="0.9"/>
+  <rect x="340" y="260" width="200" height="22" rx="8" fill="#1a0f00"/>
+  <text x="440" y="276" text-anchor="middle" font-family="monospace" font-size="8" fill="#f59e0b" opacity="0.8" letter-spacing="2">CODE-REVIEWER</text>
+  <text x="354" y="300" font-family="monospace" font-size="8.5" fill="#e2e8f0" opacity="0.5">inbox: 2 messages</text>
+  <text x="354" y="316" font-family="monospace" font-size="8.5" fill="#e2e8f0" opacity="0.4">status: reviewing</text>
+  <rect x="354" y="328" width="152" height="6" rx="3" fill="#1a2540"/>
+  <rect x="354" y="328" width="60" height="6" rx="3" fill="#f59e0b" opacity="0.7"/>
+  <text x="354" y="356" font-family="monospace" font-size="8" fill="#f59e0b" opacity="0.4">38% complete</text>
+
+  <!-- Agent 3: Tester -->
+  <rect x="660" y="260" width="200" height="120" rx="8" fill="#0a0f1a" stroke="#28ca41" stroke-width="1.5" opacity="0.9"/>
+  <rect x="660" y="260" width="200" height="22" rx="8" fill="#0a1a0f"/>
+  <text x="760" y="276" text-anchor="middle" font-family="monospace" font-size="8" fill="#28ca41" opacity="0.8" letter-spacing="2">TESTER</text>
+  <text x="674" y="300" font-family="monospace" font-size="8.5" fill="#e2e8f0" opacity="0.5">worktree: test/auth-v2</text>
+  <text x="674" y="316" font-family="monospace" font-size="8.5" fill="#e2e8f0" opacity="0.4">status: idle → ready</text>
+  <rect x="674" y="328" width="152" height="6" rx="3" fill="#1a2540"/>
+  <rect x="674" y="328" width="0" height="6" rx="3" fill="#28ca41" opacity="0.7"/>
+  <text x="674" y="356" font-family="monospace" font-size="8" fill="#28ca41" opacity="0.4">waiting on deps</text>
+
+  <!-- Agent 4: Doc Writer -->
+  <rect x="920" y="260" width="200" height="120" rx="8" fill="#0a0f1a" stroke="#00e5ff" stroke-width="1.5" opacity="0.6"/>
+  <rect x="920" y="260" width="200" height="22" rx="8" fill="#0a1020"/>
+  <text x="1020" y="276" text-anchor="middle" font-family="monospace" font-size="8" fill="#00e5ff" opacity="0.5" letter-spacing="2">DOC-WRITER</text>
+  <text x="934" y="300" font-family="monospace" font-size="8.5" fill="#e2e8f0" opacity="0.3">status: blocked</text>
+  <text x="934" y="316" font-family="monospace" font-size="8.5" fill="#e2e8f0" opacity="0.2">deps: [review, test]</text>
+  <rect x="934" y="328" width="152" height="6" rx="3" fill="#1a2540" opacity="0.5"/>
+  <text x="934" y="356" font-family="monospace" font-size="8" fill="#4a5568">pending deps</text>
+
+  <!-- JSONL Mailboxes -->
+  <rect x="100" y="435" width="160" height="55" rx="6" fill="#09090f" stroke="#7c3aed" stroke-width="1" opacity="0.5"/>
+  <text x="180" y="453" text-anchor="middle" font-family="monospace" font-size="7.5" fill="#7c3aed" opacity="0.5">INBOX: code-writer</text>
+  <text x="114" y="470" font-family="monospace" font-size="7" fill="#4a5568">{"type":"assign","task":"auth"}</text>
+  <text x="114" y="483" font-family="monospace" font-size="7" fill="#4a5568">{"type":"feedback","src":"rev"}</text>
+
+  <rect x="360" y="435" width="160" height="55" rx="6" fill="#09090f" stroke="#f59e0b" stroke-width="1" opacity="0.5"/>
+  <text x="440" y="453" text-anchor="middle" font-family="monospace" font-size="7.5" fill="#f59e0b" opacity="0.5">INBOX: reviewer</text>
+  <text x="374" y="470" font-family="monospace" font-size="7" fill="#4a5568">{"type":"review","file":"auth"}</text>
+  <text x="374" y="483" font-family="monospace" font-size="7" fill="#4a5568">{"type":"review","file":"util"}</text>
+
+  <rect x="680" y="435" width="160" height="55" rx="6" fill="#09090f" stroke="#28ca41" stroke-width="1" opacity="0.3"/>
+  <text x="760" y="453" text-anchor="middle" font-family="monospace" font-size="7.5" fill="#28ca41" opacity="0.3">INBOX: tester</text>
+  <text x="694" y="475" font-family="monospace" font-size="7" fill="#2a3a2a">(empty)</text>
+
+  <!-- Connection lines: coordinator to agents -->
+  <line x1="532" y1="160" x2="200" y2="260" stroke="#7c3aed" stroke-width="1.2" opacity="0.4" marker-end="url(#arrowW)" stroke-dasharray="5 3"/>
+  <line x1="564" y1="160" x2="460" y2="260" stroke="#f59e0b" stroke-width="1.2" opacity="0.4" marker-end="url(#arrowW)" stroke-dasharray="5 3"/>
+  <line x1="636" y1="160" x2="740" y2="260" stroke="#28ca41" stroke-width="1.2" opacity="0.3" marker-end="url(#arrowW)" stroke-dasharray="5 3"/>
+  <line x1="668" y1="160" x2="1000" y2="260" stroke="#00e5ff" stroke-width="1.2" opacity="0.2" marker-end="url(#arrowW)" stroke-dasharray="5 3"/>
+
+  <!-- Agent to mailbox lines -->
+  <line x1="180" y1="380" x2="180" y2="435" stroke="#7c3aed" stroke-width="1" opacity="0.3"/>
+  <line x1="440" y1="380" x2="440" y2="435" stroke="#f59e0b" stroke-width="1" opacity="0.3"/>
+  <line x1="760" y1="380" x2="760" y2="435" stroke="#28ca41" stroke-width="1" opacity="0.2"/>
+
+  <!-- FSM state label -->
+  <rect x="860" y="435" width="280" height="55" rx="6" fill="#09090f" stroke="#1a2540" stroke-width="1"/>
+  <text x="870" y="453" font-family="monospace" font-size="8" fill="#4a6080">FSM STATE MACHINE</text>
+  <text x="870" y="468" font-family="monospace" font-size="7.5" fill="#4a5568">CREATED → ASSIGNED → IN_REVIEW</text>
+  <text x="870" y="481" font-family="monospace" font-size="7.5" fill="#4a5568">→ APPROVED → DONE</text>
+
+  <!-- Title -->
+  <line x1="60" y1="555" x2="1140" y2="555" stroke="#1a2540" stroke-width="1"/>
+  <text x="60" y="590" font-family="'Courier New', monospace" font-size="24" fill="#ffffff" opacity="0.9" font-weight="bold">How Claude Code Runs a Whole AI Team</text>
+  <text x="60" y="614" font-family="monospace" font-size="11" fill="#4a6080" letter-spacing="2">PHASE 3 · MULTI-AGENT · JSONL MAILBOXES · GIT WORKTREES</text>
+</svg>

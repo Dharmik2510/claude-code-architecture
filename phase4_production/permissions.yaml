@@ -1,0 +1,43 @@
+# Claude Code Architecture — Permission Policy
+# Governs what the agent is allowed to do.
+# Rules are evaluated top-to-bottom. First match wins.
+# Default action (if no rule matches) is set at the bottom.
+
+default: allow
+
+rules:
+  # ── Shell safety ───────────────────────────────────────────────────────────
+
+  # Never delete files in production directories
+  - tool: run_shell
+    command_pattern: "\\brm\\b|\\bdel\\b|\\brmdir\\b"
+    path_pattern: ".*(prod|production|release|main|master).*"
+    action: deny
+    reason: "Destructive commands in production-related paths are not permitted."
+
+  # Block outbound network requests from shell
+  - tool: run_shell
+    command_pattern: "\\bcurl\\b|\\bwget\\b|\\bnc\\b|\\bncat\\b|\\btelnet\\b"
+    action: deny
+    reason: "Outbound network access from shell requires explicit human approval."
+
+  # ── File write safety ─────────────────────────────────────────────────────
+
+  # Prevent writes outside the project root
+  - tool: write_file
+    path_pattern: "^\\.\\./|^/"
+    action: deny
+    reason: "Writes outside the project directory are not permitted."
+
+  # Prevent overwriting dot-config files silently
+  - tool: write_file
+    path_pattern: ".*\\.env$|.*\\.ssh.*|.*\\.aws.*"
+    action: deny
+    reason: "Writing to credential or environment files requires human confirmation."
+
+  # ── Read — generally always allowed ───────────────────────────────────────
+  - tool: read_file
+    action: allow
+
+  - tool: list_directory
+    action: allow

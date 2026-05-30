@@ -1,0 +1,122 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" style="background:#09090f">
+  <defs>
+    <radialGradient id="gD" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#09090f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="#09090f"/>
+  <ellipse cx="600" cy="300" rx="500" ry="260" fill="url(#gD)"/>
+
+  <!-- Grid -->
+  <g opacity="0.03" stroke="#f59e0b" stroke-width="0.5">
+    <line x1="0" y1="100" x2="1200" y2="100"/>
+    <line x1="0" y1="200" x2="1200" y2="200"/>
+    <line x1="0" y1="300" x2="1200" y2="300"/>
+    <line x1="0" y1="400" x2="1200" y2="400"/>
+    <line x1="0" y1="500" x2="1200" y2="500"/>
+    <line x1="200" y1="0" x2="200" y2="630"/>
+    <line x1="400" y1="0" x2="400" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="800" y1="0" x2="800" y2="630"/>
+    <line x1="1000" y1="0" x2="1000" y2="630"/>
+  </g>
+
+  <!-- Section header -->
+  <text x="60" y="108" font-family="monospace" font-size="9" fill="#4a6080" letter-spacing="3">SEQUENTIAL  (before asyncio)</text>
+  <text x="640" y="108" font-family="monospace" font-size="9" fill="#f59e0b" opacity="0.7" letter-spacing="3">PARALLEL  (asyncio.gather)</text>
+  <line x1="60" y1="116" x2="560" y2="116" stroke="#3a3a2a" stroke-width="1"/>
+  <line x1="640" y1="116" x2="1140" y2="116" stroke="#f59e0b" stroke-width="1" opacity="0.4"/>
+
+  <!-- SEQUENTIAL timeline (left side) -->
+  <!-- Total time bar -->
+  <text x="60" y="148" font-family="monospace" font-size="8" fill="#4a5568">total: 18.2s</text>
+
+  <!-- Tool 1: read_file (3.2s) -->
+  <rect x="60" y="160" width="240" height="28" rx="4" fill="#1a0f0a" stroke="#f59e0b" stroke-width="1" opacity="0.5"/>
+  <text x="72" y="178" font-family="monospace" font-size="8" fill="#f59e0b" opacity="0.5">read_file(auth.py)</text>
+  <text x="280" y="178" text-anchor="end" font-family="monospace" font-size="7.5" fill="#4a5568">3.2s</text>
+
+  <!-- Tool 2 after 1 -->
+  <rect x="60" y="196" width="260" height="28" rx="4" fill="#1a0f0a" stroke="#f59e0b" stroke-width="1" opacity="0.5"/>
+  <text x="72" y="214" font-family="monospace" font-size="8" fill="#f59e0b" opacity="0.5">read_file(utils.py)</text>
+  <text x="300" y="214" text-anchor="end" font-family="monospace" font-size="7.5" fill="#4a5568">3.4s</text>
+
+  <!-- Tool 3 after 2 -->
+  <rect x="60" y="232" width="200" height="28" rx="4" fill="#1a0f0a" stroke="#f59e0b" stroke-width="1" opacity="0.5"/>
+  <text x="72" y="250" font-family="monospace" font-size="8" fill="#f59e0b" opacity="0.5">run_shell(pytest)</text>
+  <text x="240" y="250" text-anchor="end" font-family="monospace" font-size="7.5" fill="#4a5568">2.8s</text>
+
+  <!-- Tool 4 after 3 -->
+  <rect x="60" y="268" width="280" height="28" rx="4" fill="#1a0f0a" stroke="#f59e0b" stroke-width="1" opacity="0.5"/>
+  <text x="72" y="286" font-family="monospace" font-size="8" fill="#f59e0b" opacity="0.5">read_file(models.py)</text>
+  <text x="320" y="286" text-anchor="end" font-family="monospace" font-size="7.5" fill="#4a5568">3.8s</text>
+
+  <!-- Tool 5 after 4 -->
+  <rect x="60" y="304" width="250" height="28" rx="4" fill="#1a0f0a" stroke="#f59e0b" stroke-width="1" opacity="0.5"/>
+  <text x="72" y="322" font-family="monospace" font-size="8" fill="#f59e0b" opacity="0.5">run_shell(lint)</text>
+  <text x="290" y="322" text-anchor="end" font-family="monospace" font-size="7.5" fill="#4a5568">5.0s</text>
+
+  <!-- Total -->
+  <rect x="60" y="344" width="472" height="20" rx="3" fill="#3a2010" stroke="#ff4444" stroke-width="1" opacity="0.4"/>
+  <text x="80" y="358" font-family="monospace" font-size="8" fill="#ff4444" opacity="0.6">████████████████████████████████████  18.2s total</text>
+
+  <!-- PARALLEL timeline (right side) -->
+  <text x="640" y="148" font-family="monospace" font-size="8" fill="#4a5568">total: 5.0s</text>
+
+  <!-- All 5 tools running at same time -->
+  <rect x="640" y="160" width="172" height="28" rx="4" fill="#0f1020" stroke="#00e5ff" stroke-width="1.5" opacity="0.8"/>
+  <text x="652" y="178" font-family="monospace" font-size="8" fill="#00e5ff" opacity="0.8">read_file(auth.py)</text>
+
+  <rect x="640" y="196" width="184" height="28" rx="4" fill="#0f1020" stroke="#00e5ff" stroke-width="1.5" opacity="0.8"/>
+  <text x="652" y="214" font-family="monospace" font-size="8" fill="#00e5ff" opacity="0.8">read_file(utils.py)</text>
+
+  <rect x="640" y="232" width="150" height="28" rx="4" fill="#0f1020" stroke="#7c3aed" stroke-width="1.5" opacity="0.8"/>
+  <text x="652" y="250" font-family="monospace" font-size="8" fill="#7c3aed" opacity="0.8">run_shell(pytest)</text>
+
+  <rect x="640" y="268" width="202" height="28" rx="4" fill="#0f1020" stroke="#00e5ff" stroke-width="1.5" opacity="0.8"/>
+  <text x="652" y="286" font-family="monospace" font-size="8" fill="#00e5ff" opacity="0.8">read_file(models.py)</text>
+
+  <rect x="640" y="304" width="270" height="28" rx="4" fill="#0f1020" stroke="#7c3aed" stroke-width="1.5" opacity="0.8"/>
+  <text x="652" y="322" font-family="monospace" font-size="8" fill="#7c3aed" opacity="0.8">run_shell(lint)</text>
+
+  <!-- Gather bracket -->
+  <line x1="630" y1="155" x2="630" y2="337" stroke="#f59e0b" stroke-width="2" opacity="0.5"/>
+  <text x="618" y="250" text-anchor="end" transform="rotate(-90 618 250)" font-family="monospace" font-size="8" fill="#f59e0b" opacity="0.5">gather()</text>
+
+  <!-- Total parallel -->
+  <rect x="640" y="344" width="270" height="20" rx="3" fill="#0f1a0a" stroke="#28ca41" stroke-width="1.5" opacity="0.7"/>
+  <text x="660" y="358" font-family="monospace" font-size="8" fill="#28ca41" opacity="0.8">█████████████████  5.0s total  (3.6x faster)</text>
+
+  <!-- Prompt caching section -->
+  <rect x="60" y="395" width="1080" height="100" rx="8" fill="#0a0f1a" stroke="#f59e0b" stroke-width="1" opacity="0.4"/>
+  <text x="80" y="418" font-family="monospace" font-size="9" fill="#f59e0b" opacity="0.6" letter-spacing="2">PROMPT CACHING</text>
+
+  <!-- First call (no cache) -->
+  <rect x="80" y="430" width="220" height="50" rx="5" fill="#09090f" stroke="#ff4444" stroke-width="1" opacity="0.5"/>
+  <text x="190" y="448" text-anchor="middle" font-family="monospace" font-size="7.5" fill="#ff4444" opacity="0.6">Call #1 (cold)</text>
+  <text x="190" y="463" text-anchor="middle" font-family="monospace" font-size="7.5" fill="#4a5568">10,000 tokens × $0.003</text>
+  <text x="190" y="475" text-anchor="middle" font-family="monospace" font-size="8" fill="#ff4444" opacity="0.5">$0.030</text>
+
+  <!-- Cache written arrow -->
+  <line x1="300" y1="455" x2="360" y2="455" stroke="#f59e0b" stroke-width="1.5" opacity="0.5" stroke-dasharray="4 3"/>
+  <text x="330" y="447" text-anchor="middle" font-family="monospace" font-size="7" fill="#f59e0b" opacity="0.5">cached</text>
+
+  <!-- Subsequent calls (cache hit) -->
+  <rect x="360" y="430" width="220" height="50" rx="5" fill="#09090f" stroke="#28ca41" stroke-width="1.5" opacity="0.7"/>
+  <text x="470" y="448" text-anchor="middle" font-family="monospace" font-size="7.5" fill="#28ca41" opacity="0.7">Calls #2–#N (hot)</text>
+  <text x="470" y="463" text-anchor="middle" font-family="monospace" font-size="7.5" fill="#4a5568">10,000 tokens × $0.0003</text>
+  <text x="470" y="475" text-anchor="middle" font-family="monospace" font-size="8" fill="#28ca41" opacity="0.8">$0.003  (90% cheaper)</text>
+
+  <!-- MCP box -->
+  <rect x="650" y="430" width="440" height="50" rx="5" fill="#09090f" stroke="#7c3aed" stroke-width="1.5" opacity="0.6"/>
+  <text x="870" y="448" text-anchor="middle" font-family="monospace" font-size="7.5" fill="#7c3aed" opacity="0.7">MCP (Model Context Protocol)</text>
+  <text x="870" y="463" text-anchor="middle" font-family="monospace" font-size="7" fill="#4a5568">register_server("filesystem", schemas, handlers)</text>
+  <text x="870" y="475" text-anchor="middle" font-family="monospace" font-size="7" fill="#4a5568">→ tools appear automatically in agent catalog</text>
+
+  <!-- Title -->
+  <line x1="60" y1="555" x2="1140" y2="555" stroke="#1a2540" stroke-width="1"/>
+  <text x="60" y="590" font-family="'Courier New', monospace" font-size="24" fill="#ffffff" opacity="0.9" font-weight="bold">Near-Zero Latency with asyncio and Caching</text>
+  <text x="60" y="614" font-family="monospace" font-size="11" fill="#4a6080" letter-spacing="2">PHASE 5 · ASYNC RUNTIME · PARALLEL TOOLS · PROMPT CACHING · MCP</text>
+</svg>
