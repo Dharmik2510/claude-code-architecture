@@ -6,7 +6,7 @@ Add logging, metrics, or alerts without touching tool code.
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable
-from datetime import datetime
+from datetime import datetime, timezone
 
 @dataclass
 class ToolEvent:
@@ -71,6 +71,6 @@ def audit_writes(event: ToolEvent) -> None:
     if event.tool_name == "write_file" and event.event_type == "after_call":
         with open("audit.log", "a") as f:
             f.write(
-                f"{datetime.utcnow().isoformat()} WRITE "
+                f"{datetime.now(timezone.utc).isoformat()} WRITE "
                 f"{event.tool_args.get('path','?')}\n"
             )

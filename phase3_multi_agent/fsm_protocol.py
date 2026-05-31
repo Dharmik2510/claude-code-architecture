@@ -5,7 +5,7 @@ messages that are valid transitions from the current state.
 """
 from enum import Enum
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class TaskState(str, Enum):
@@ -71,7 +71,7 @@ class AgentFSM:
             "message_type": message_type,
             "from_agent":   from_agent,
             "payload":      payload or {},
-            "timestamp":    datetime.utcnow().isoformat(),
+            "timestamp":    datetime.now(timezone.utc).isoformat(),
         }
         self.history.append(event)
         print(f"[FSM] {self.task_id}: {old_state} → {self.state} (via '{message_type}' by {from_agent})")

@@ -5,7 +5,7 @@ Each agent has an inbox file. Messages survive process restarts.
 import json
 import uuid
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 MAILBOX_DIR = Path(".agent_mailboxes")
@@ -26,7 +26,7 @@ def send_message(
         "id":        str(uuid.uuid4()),
         "from":      from_agent,
         "to":        to_agent,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "read":      False,
         **message,
     }

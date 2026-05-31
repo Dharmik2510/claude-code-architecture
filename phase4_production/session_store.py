@@ -5,7 +5,7 @@ Resuming restores exact context. Forking branches from any saved point.
 """
 import json
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 SESSIONS_DIR = Path(".sessions")
@@ -23,12 +23,12 @@ def save_session(
 
     state = {
         "session_id":    session_id,
-        "saved_at":      datetime.utcnow().isoformat(),
+        "saved_at":      datetime.now(timezone.utc).isoformat(),
         "message_count": len(messages),
         "messages":      messages,
         "metadata":      metadata or {},
     }
-    ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     (session_dir / f"state_{ts}.json").write_text(json.dumps(state, indent=2))
     (session_dir / "latest.json").write_text(json.dumps(state, indent=2))
     return str(session_dir / "latest.json")
@@ -51,7 +51,7 @@ def fork_session(source_id: str, fork_id: str) -> Optional[dict]:
         **source,
         "session_id":  fork_id,
         "forked_from": source_id,
-        "forked_at":   datetime.utcnow().isoformat(),
+        "forked_at":   datetime.now(timezone.utc).isoformat(),
     }
     save_session(fork_id, fork["messages"], fork.get("metadata", {}))
     return fork

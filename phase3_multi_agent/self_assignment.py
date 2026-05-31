@@ -9,7 +9,7 @@ import os
 import time
 import threading
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 import sys
@@ -50,7 +50,7 @@ def claim_next_task(
                 # Claim it
                 graph[tid]["status"]      = "running"
                 graph[tid]["assigned_to"] = agent_name
-                graph[tid]["claimed_at"]  = datetime.utcnow().isoformat()
+                graph[tid]["claimed_at"]  = datetime.now(timezone.utc).isoformat()
 
                 f.seek(0)
                 json.dump(graph, f, indent=2)

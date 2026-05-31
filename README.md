@@ -29,21 +29,11 @@ If you want to understand *why* Claude Code feels different from a chatbot with 
 
 ---
 
-## Verified Context: Why Claude Code Matters
+## Why These Patterns Matter
 
-Public reporting (not audited financial statements) describes Claude Code's growth after its public launch in **May 2025**:
+Agentic coding tools moved from demo to daily-driver fast — and the gap between "chatbot that can edit files" and "agent you trust on a real codebase" is almost entirely *engineering*: the loop, the safety rails, the coordination, the cost controls. This repo teaches that engineering.
 
-| Milestone | Reported figure | Source |
-|---|---|---|
-| ~6 months post-launch | **$1B annualized run-rate revenue** | [VentureBeat](https://venturebeat.com/technology/anthropic-says-it-hit-a-30-billion-revenue-run-rate-after-crazy-80x-growth), [SaaStr](https://www.saastr.com/anthropic-just-hit-14-billion-in-arr-up-from-1-billion-just-14-months-ago/) |
-| February 2026 | **$2.5B+ annualized run-rate** for Claude Code specifically | [SaaStr](https://www.saastr.com/anthropic-just-hit-14-billion-in-arr-up-from-1-billion-just-14-months-ago/) |
-
-**Important caveats (read these):**
-- *Annualized run-rate* extrapolates recent performance over a full year — it is not the same as audited annual revenue.
-- Anthropic has stated that Claude Code drives a large share of company growth, but exact product-level breakdowns come from press reporting, not public filings.
-- This repository teaches the *engineering patterns* behind such products. It does not reproduce Anthropic's business results.
-
-What *is* documented by Anthropic directly: Claude Code is an agentic tool that reads codebases, edits files, runs commands, supports [MCP integrations](https://docs.anthropic.com/en/docs/claude-code/mcp), uses project-level instructions (`CLAUDE.md`), supports [agent teams](https://docs.anthropic.com/en/docs/claude-code/overview), and exposes an [Agent SDK](https://docs.anthropic.com/en/docs/claude-code/overview). This curriculum is organized around those publicly described capabilities.
+What's documented by Anthropic directly: Claude Code reads codebases, edits files, runs commands, supports [MCP integrations](https://docs.anthropic.com/en/docs/claude-code/mcp), uses project-level instructions (`CLAUDE.md`), supports [agent teams](https://docs.anthropic.com/en/docs/claude-code/overview), and exposes an [Agent SDK](https://docs.anthropic.com/en/docs/claude-code/overview). This curriculum is organized around those publicly described capabilities. (Press has reported strong revenue for the product; those are run-rate estimates from reporting, not audited figures, and aren't what this repo is about.)
 
 ---
 
@@ -62,6 +52,21 @@ Phase 6  →  Enterprise scale (Redis mailboxes, worktree lifecycle)
 
 Each phase is self-contained. Phase 1 alone is a functional coding agent. Phase 6 wires everything together in `combined_agent.py`.
 
+### The Minimum Production Baseline
+
+The phases read like optional upgrades, but they aren't all optional. **If you put an agent anywhere near a real codebase, this is the non-negotiable floor:**
+
+| Need | Pattern | File |
+|---|---|---|
+| The loop | 1–2 (loop + tool dispatch) | `phase1_core_loop/` |
+| **Undo** — every write reversible | 14 (snapshots) | `phase4_production/snapshots.py` |
+| **Guardrails** — deny dangerous calls | 15 (YAML permissions) | `phase4_production/permissions.py` |
+| **Resilience** — survive rate limits / drops | `with_retry()` | [`config.py`](config.py) |
+| **Cost visibility** — tokens per turn | `log_usage()` | [`config.py`](config.py) |
+| **Resume** — crash-safe history | 17 (sessions) | `phase4_production/session_store.py` |
+
+`phase6_enterprise/combined_agent.py` runs with all of these on. Everything else (multi-agent teams, async, Redis) is scale-up you add when the workload demands it. **Phases 1–3 on their own are learning sandboxes — don't point them at code you can't afford to lose.**
+
 ---
 
 ## For Non-Developers — The Idea in Plain Language
@@ -75,6 +80,31 @@ Imagine a skilled assistant that can:
 - Undo mistakes and follow rules you define in advance
 
 This repository shows *how software engineers build that kind of assistant* — not with magic, but with a loop, tools, and careful engineering around memory, safety, and coordination.
+
+**Each phase, in one sentence:**
+
+| Phase | Plain-language analogy |
+|---|---|
+| 1 — Core loop | A worker who reads the task, picks a tool, uses it, checks the result, and repeats until done. |
+| 2 — Context | A worker with a notepad: they summarize old notes so they never run out of room, and only pull out the manuals they actually need. |
+| 3 — Multi-agent | A project manager handing tasks to a team — each member works in their *own copy* of the office so nobody overwrites anyone else, and they leave notes in each other's mailboxes. |
+| 4 — Production | Safety rails: every change can be undone, dangerous actions are blocked by written rules, and the work is saved so a crash doesn't lose progress. |
+| 5 — Performance | Doing independent steps at the same time instead of one-by-one, and not re-reading the same manual every time (caching) to save money. |
+| 6 — Enterprise | The same team, but spread across many machines, coordinating over a shared message bus. |
+
+<details>
+<summary><strong>Glossary (click to expand)</strong> — eight terms that unlock the rest of this repo</summary>
+
+- **Agent** — a program that loops: think → use a tool → look at the result → repeat, until the task is done.
+- **Tool** — a single capability the agent can invoke (read a file, run a command, write a file). The model *asks*; your code *does*.
+- **Context window** — the model's short-term memory. It's finite, so long sessions must be compressed (Phase 2).
+- **Token** — the unit models read and bill by (roughly ¾ of a word). Fewer tokens = lower cost.
+- **Prompt caching** — reusing the unchanged parts of a request so you don't pay full price to re-send them every turn.
+- **MCP (Model Context Protocol)** — a standard way to plug external tools into an agent without changing its code.
+- **Worktree** — a Git feature that gives each agent its own working copy of the project, so parallel edits don't collide.
+- **Subagent** — a fresh helper agent spun up for one focused subtask, with its own clean memory.
+
+</details>
 
 ---
 
@@ -101,8 +131,12 @@ Six self-contained articles — read in order or jump to what you need. Each lin
 git clone https://github.com/dhsoni2510/claude-code-architecture
 cd claude-code-architecture
 
-pip install anthropic aiofiles pyyaml redis
+python -m venv .venv && source .venv/bin/activate
+pip install -e .            # core deps, pinned in pyproject.toml
+# pip install -e ".[redis]"  # add Phase 6 Redis support
+# pip install -e ".[dev]"    # add pytest to run the test suite
 
+cp .env.example .env        # then put your key in .env
 export ANTHROPIC_API_KEY=your-key-here
 # https://console.anthropic.com/
 
@@ -192,9 +226,22 @@ claude-code-architecture/
 │   ├── 05-async-performance.md
 │   └── 06-enterprise.md
 │
+├── tests/                    # offline pytest suite (no API key needed)
+│   ├── test_task_graph.py    # Pattern 7
+│   ├── test_compressor.py    # Pattern 6
+│   ├── test_fsm.py           # Pattern 10
+│   ├── test_permissions.py   # Pattern 15
+│   ├── test_snapshots.py     # Pattern 14
+│   ├── test_mailbox.py       # Pattern 9
+│   ├── test_tools.py         # Pattern 2
+│   └── test_config.py        # resilience helpers
+│
 ├── docs/
 │   └── PATTERN_MAP.md        # Pattern → code → Anthropic doc links
 │
+├── config.py                 # shared model/retry/cost helpers (production baseline)
+├── pyproject.toml            # pinned deps + pytest config
+├── .env.example              # copy to .env, add your key
 ├── LICENSE
 └── README.md
 ```
@@ -319,6 +366,19 @@ Each row links a pattern to its implementation file and the problem it solves. "
 
 ---
 
+## Testing
+
+The logic-heavy patterns (task graph, compression, FSM, permissions, mailboxes, snapshots, tools, and the `config.py` resilience helpers) are covered by a `pytest` suite that runs **without an API key** — no model calls, fully offline.
+
+```bash
+pip install -e ".[dev]"
+pytest -q
+```
+
+This is what backs the "reversible writes" and "policy-governed calls" claims — the safety behavior is asserted, not just described.
+
+---
+
 ## Requirements
 
 | Dependency | Phases | Notes |
@@ -328,9 +388,7 @@ Each row links a pattern to its implementation file and the problem it solves. "
 | Redis 7+ | 6 | Optional; `docker run -p 6379:6379 redis` |
 | Git 2.20+ | 3, 6, examples | Required for worktree patterns |
 
-```bash
-pip install anthropic aiofiles pyyaml redis
-```
+Dependencies are pinned in [`pyproject.toml`](pyproject.toml); install with `pip install -e .` (add `[redis]` or `[dev]` extras as needed).
 
 ---
 
@@ -343,10 +401,10 @@ No. Phase 1 is a working agent. Add phases as your use case requires them.
 The patterns are model-agnostic. This repo uses Anthropic's tool-calling API; other models with tool support need adapter changes.
 
 **Is it safe on a real codebase?**  
-With Phase 4 (snapshots + YAML permissions), writes are reversible and tool calls are policy-governed. Earlier phases should be treated as learning sandboxes.
+With the [Minimum Production Baseline](#the-minimum-production-baseline) on (snapshots + YAML permissions + retries), writes are reversible and tool calls are policy-governed — and that behavior is covered by the test suite, not just asserted in prose. Earlier phases on their own should be treated as learning sandboxes.
 
 **How much does a task cost?**  
-Cost depends on model, task length, and whether prompt caching is enabled. Run your own tasks and inspect `response.usage` — this repo does not publish cost guarantees.
+Cost depends on model, task length, and whether prompt caching is enabled. `config.log_usage()` prints input/output/cache tokens per turn (wired into `combined_agent.py`) so you can measure your own workload — this repo does not publish cost guarantees.
 
 ---
 

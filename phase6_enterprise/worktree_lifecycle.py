@@ -6,7 +6,7 @@ automatically. Keeps the repository clean at scale.
 import subprocess
 import json
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Optional
 
@@ -60,8 +60,8 @@ class WorktreeLifecycleManager:
             "base_branch": base_branch,
             "agent":       agent_name,
             "status":      WorktreeStatus.ACTIVE,
-            "created_at":  datetime.utcnow().isoformat(),
-            "updated_at":  datetime.utcnow().isoformat(),
+            "created_at":  datetime.now(timezone.utc).isoformat(),
+            "updated_at":  datetime.now(timezone.utc).isoformat(),
         }
         _save(registry)
         print(f"[Lifecycle] Created worktree: {path} (branch: {branch_name})")
@@ -74,8 +74,8 @@ class WorktreeLifecycleManager:
             return
         registry[task_id].update(
             status=WorktreeStatus.IDLE,
-            idle_since=datetime.utcnow().isoformat(),
-            updated_at=datetime.utcnow().isoformat(),
+            idle_since=datetime.now(timezone.utc).isoformat(),
+            updated_at=datetime.now(timezone.utc).isoformat(),
         )
         _save(registry)
 
@@ -100,7 +100,7 @@ class WorktreeLifecycleManager:
         has_conflicts = merge.returncode != 0
         if has_conflicts:
             registry[task_id]["status"] = WorktreeStatus.CONFLICT
-            registry[task_id]["updated_at"] = datetime.utcnow().isoformat()
+            registry[task_id]["updated_at"] = datetime.now(timezone.utc).isoformat()
             _save(registry)
             print(f"[Lifecycle] CONFLICT detected in {task_id}")
         return not has_conflicts
@@ -135,8 +135,8 @@ class WorktreeLifecycleManager:
 
         registry[task_id].update(
             status=WorktreeStatus.MERGED,
-            merged_at=datetime.utcnow().isoformat(),
-            updated_at=datetime.utcnow().isoformat(),
+            merged_at=datetime.now(timezone.utc).isoformat(),
+            updated_at=datetime.now(timezone.utc).isoformat(),
         )
         _save(registry)
         print(f"[Lifecycle] Merged and cleaned up: {task_id}")
@@ -148,7 +148,7 @@ class WorktreeLifecycleManager:
         Returns list of pruned task IDs.
         """
         registry = _load()
-        cutoff   = datetime.utcnow() - timedelta(hours=max_idle_hours)
+        cutoff   = datetime.now(timezone.utc) - timedelta(hours=max_idle_hours)
         pruned   = []
 
         for task_id, entry in list(registry.items()):
@@ -163,7 +163,7 @@ class WorktreeLifecycleManager:
             _git("worktree", "remove", str(path), "--force", check=False)
             _git("branch", "-D", branch, check=False)
             registry[task_id]["status"]     = WorktreeStatus.ABANDONED
-            registry[task_id]["updated_at"] = datetime.utcnow().isoformat()
+            registry[task_id]["updated_at"] = datetime.now(timezone.utc).isoformat()
             pruned.append(task_id)
             print(f"[Lifecycle] Pruned abandoned worktree: {task_id}")
 

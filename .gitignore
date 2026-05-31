@@ -1,0 +1,38 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# ── Tooling ──────────────────────────────────────────────────────────────────
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ── Secrets ──────────────────────────────────────────────────────────────────
+.env
+*.key
+
+# ── Runtime artifacts created by the agents (demos write these) ────────────────
+.sessions/
+.snapshots/
+.file_snapshots/
+.agent_mailboxes/
+.task_graph.json
+summary.txt
+src/
+tests/test_calculator.py
+docs/calculator.md
+
+# ── OS / editor ────────────────────────────────────────────────────────────────
+.DS_Store
+.idea/
+.vscode/

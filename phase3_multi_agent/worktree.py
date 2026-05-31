@@ -6,7 +6,7 @@ No file conflicts. No test interference. Clean PR per task.
 import subprocess
 import json
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 WORKTREE_BASE = Path(".worktrees")
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     # Simulate agent writing a file
     (wt_path / "agent_output.txt").write_text(
-        f"Agent completed task {task_id} at {datetime.utcnow().isoformat()}\n"
+        f"Agent completed task {task_id} at {datetime.now(timezone.utc).isoformat()}\n"
     )
 
     # Commit the work

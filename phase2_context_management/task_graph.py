@@ -5,7 +5,7 @@ Task state persisted to disk. Survives process restarts and context resets.
 import json
 import fcntl
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 
@@ -24,8 +24,8 @@ def init(tasks: list[dict], graph_file: Path = GRAPH_FILE) -> None:
             "status":     "pending",
             "result":     None,
             "assigned_to": None,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
         }
     graph_file.write_text(json.dumps(graph, indent=2))
 
@@ -66,7 +66,7 @@ def claim(
 
                 graph[tid]["status"]      = "running"
                 graph[tid]["assigned_to"] = agent_name
-                graph[tid]["updated_at"]  = datetime.utcnow().isoformat()
+                graph[tid]["updated_at"]  = datetime.now(timezone.utc).isoformat()
 
                 f.seek(0)
                 json.dump(graph, f, indent=2)
@@ -80,14 +80,14 @@ def claim(
 def mark_done(task_id: str, result: str, graph_file: Path = GRAPH_FILE) -> None:
     graph = json.loads(graph_file.read_text())
     graph[task_id].update(status="done", result=result[:500],
-                          updated_at=datetime.utcnow().isoformat())
+                          updated_at=datetime.now(timezone.utc).isoformat())
     graph_file.write_text(json.dumps(graph, indent=2))
 
 
 def mark_failed(task_id: str, error: str, graph_file: Path = GRAPH_FILE) -> None:
     graph = json.loads(graph_file.read_text())
     graph[task_id].update(status="failed", result=error[:500],
-                          updated_at=datetime.utcnow().isoformat())
+                          updated_at=datetime.now(timezone.utc).isoformat())
     graph_file.write_text(json.dumps(graph, indent=2))
 
 

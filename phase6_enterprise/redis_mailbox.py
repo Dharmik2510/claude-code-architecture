@@ -9,7 +9,7 @@ Requires:  pip install redis
 import json
 import asyncio
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Callable, Awaitable
 
 try:
@@ -77,7 +77,7 @@ class RedisAgentMailbox:
             "id":        str(uuid.uuid4()),
             "from":      from_agent,
             "to":        to_agent,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "payload":   json.dumps(message),
         }
         msg_id = await self._client.xadd(self._stream_key(to_agent), envelope)

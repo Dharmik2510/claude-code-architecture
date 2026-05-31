@@ -4,7 +4,7 @@ Every file write is automatically backed up. Any write can be undone.
 """
 import shutil
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 SNAPSHOT_DIR = Path(".file_snapshots")
@@ -20,7 +20,7 @@ def snapshot_before_write(filepath: str) -> Optional[str]:
     path = Path(filepath)
     if not path.exists():
         return None
-    ts       = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
+    ts       = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
     snapshot = SNAPSHOT_DIR / f"{_safe_name(filepath)}__{ts}"
     shutil.copy2(path, snapshot)
     return str(snapshot)

@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-code-architecture"
+version = "0.1.0"
+description = "Educational reimplementation of the architectural patterns behind a production AI coding agent."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+authors = [{ name = "Dharmik Soni" }]
+
+# Pinned to a known-good range. Bump deliberately, not accidentally.
+dependencies = [
+    "anthropic>=0.40,<1.0",
+    "aiofiles>=23.2,<25.0",
+    "pyyaml>=6.0,<7.0",
+]
+
+[project.optional-dependencies]
+# Phase 6 distributed mailboxes only.
+redis = ["redis>=5.0,<6.0"]
+# Everything needed to run the test suite + lint.
+dev = ["pytest>=8.0,<9.0"]
+
+[project.urls]
+Repository = "https://github.com/dhsoni2510/claude-code-architecture"
+
+# Each phase directory is its own top-level package (it has an __init__.py).
+# This lets `from phase3_multi_agent.mailbox import ...` work after `pip install -e .`.
+[tool.setuptools]
+packages = [
+    "phase1_core_loop",
+    "phase2_context_management",
+    "phase3_multi_agent",
+    "phase4_production",
+    "phase5_async_runtime",
+    "phase6_enterprise",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Put the repo root AND each phase dir on the path so tests can import a
+# pattern module by its bare name (`from compressor import ...`) — the same
+# way the pattern files import their siblings when run as standalone scripts.
+pythonpath = [
+    ".",
+    "phase1_core_loop",
+    "phase2_context_management",
+    "phase3_multi_agent",
+    "phase4_production",
+    "phase5_async_runtime",
+    "phase6_enterprise",
+]

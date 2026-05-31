@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from phase1_core_loop.tools       import TOOL_SCHEMAS, TOOL_HANDLERS
 from phase1_core_loop.todo_tools  import TODO_SCHEMAS, TODO_HANDLERS
 from phase2_context_management.task_graph   import init as init_graph, get_ready, mark_done, mark_failed, status_report
-from phase2_context_management.skill_loader import SkillLoader
+from phase2_context_management.skill_loader import SKILL_TOOL_SCHEMA, tool_load_skill
 from phase3_multi_agent.background_tasks    import run_background_task, check_notifications
 from phase3_multi_agent.mailbox             import send_message, read_unread_messages
 from phase4_production.snapshots            import tool_safe_write
@@ -28,6 +28,7 @@ from phase4_production.permissions          import governed_tool_call
 from phase4_production.event_bus            import subscribe, log_all_calls, audit_writes
 from phase4_production.session_store        import save_session, load_session
 from phase5_async_runtime.async_agent       import run_async_agent
+from config import MODEL, MAX_TOKENS, make_client, with_retry, log_usage
 
 
 DEMO_TASKS = [
@@ -66,29 +67,31 @@ def setup_event_bus():
 
 def run_agent_on_task(task: dict) -> str:
     """Run a single agent turn on a task description, with all hardening layers."""
-    from anthropic import Anthropic
-    client = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    client = make_client()  # config: resolves ANTHROPIC_API_KEY with a clear error
 
     # Governed + snapshotting tool handlers
     safe_handlers = {
         **TOOL_HANDLERS,
         "write_file": tool_safe_write,        # Phase 4: snapshots
+        "load_skill": tool_load_skill,        # Phase 2: on-demand skills
         **TODO_HANDLERS,
     }
 
     def dispatch(tool_name, tool_args):
         return governed_tool_call(tool_name, tool_args, safe_handlers)  # Phase 4: permissions
 
-    all_tools = TOOL_SCHEMAS + TODO_SCHEMAS
+    all_tools = TOOL_SCHEMAS + TODO_SCHEMAS + [SKILL_TOOL_SCHEMA]
     messages  = [{"role": "user", "content": task["description"]}]
 
     while True:
-        response = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=8096,
+        # config.with_retry: exponential backoff on rate limits / connection drops
+        response = with_retry(lambda: client.messages.create(
+            model=MODEL,
+            max_tokens=MAX_TOKENS,
             tools=all_tools,
             messages=messages,
-        )
+        ))
+        log_usage(response, label=task["id"])  # config: per-turn cost observability
         messages.append({"role": "assistant", "content": response.content})
 
         if response.stop_reason == "end_turn":
