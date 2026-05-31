@@ -1,160 +1,211 @@
 <div align="center">
 
-# 🤖 Claude Code Architecture
+# Claude Code Architecture
 
-### The 23 Engineering Patterns Behind a $1B AI Coding Agent — Fully Reproduced
+### Learn the engineering patterns behind a production AI coding agent — by building each one yourself
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://python.org)
 [![Anthropic SDK](https://img.shields.io/badge/anthropic--sdk-latest-orange)](https://github.com/anthropic/anthropic-sdk-python)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/dhsoni2510/claude-code-architecture?style=social)](https://github.com/dhsoni2510/claude-code-architecture)
+[![Patterns](https://img.shields.io/badge/patterns-23%20runnable-purple.svg)](#-the-23-patterns)
 
-**6-part article series · 23 patterns · Runnable code for every concept**
+**6-part article series · 23 patterns · One Python file per pattern · [Pattern map](docs/PATTERN_MAP.md)**
 
-[Quick Start](#-quick-start) · [What You'll Learn](#-what-youll-learn) · [Article Series](#-article-series) · [Code Walkthrough](#-code-walkthrough) · [Contributing](#-contributing)
+[What This Is (and Isn't)](#-what-this-is-and-isnt) · [Article Series](#-article-series) · [Quick Start](#-quick-start) · [Pattern Map](docs/PATTERN_MAP.md) · [Patterns](#-the-23-patterns)
 
 </div>
 
 ---
 
-## 🌟 Why This Repository Exists
+## What This Is (and Isn't)
 
-Claude Code crossed **$1 billion in annualized revenue** six months after launch. The reason isn't a secret model or a proprietary framework. It's a specific set of engineering decisions around how an AI model is wrapped, constrained, and given tools.
+**This is:** An open-source, educational reimplementation of the *architectural patterns* that make agentic coding tools work — written in plain Python, one concept per file, with runnable demos.
 
-This repository reproduces every one of those decisions from scratch — 23 patterns across 6 architectural layers — with real, runnable Python code and plain-English explanations for every line.
+**This is not:** The Claude Code source code. Anthropic has not published Claude Code's internal implementation. Nothing in this repository claims to be a copy of proprietary software.
 
-**You don't need to be an AI researcher to benefit from this.** If you're a developer who has ever wanted to build an AI agent that actually works in production, this is the engineering blueprint.
+**How it was built:** Each pattern maps to something Anthropic documents publicly (product docs, API references, MCP specification) or to a well-known agent-engineering technique (tool dispatch, while-loops, Git worktrees). Every file in this repo is labeled with its pattern number and can be run independently.
 
----
-
-## 🧑‍💻 For Developers — What This Is
-
-A step-by-step implementation of Claude Code's architecture, organized by complexity:
-
-```
-Phase 1  →  A minimal agent that runs in a while loop
-Phase 2  →  An agent that manages its own memory and knowledge
-Phase 3  →  A team of agents that work in parallel
-Phase 4  →  A production-grade agent with audit trails and undo
-Phase 5  →  A high-performance agent using async and caching
-Phase 6  →  An enterprise agent fleet backed by Redis and Git
-```
-
-Each phase builds on the last. You can stop at Phase 1 and already have something more capable than most LLM demos. By Phase 6 you have the architecture of a commercial product.
+If you want to understand *why* Claude Code feels different from a chatbot with file access — and how to build that difference yourself — start at Phase 1.
 
 ---
 
-## 🙋 For Non-Developers — What This Actually Does
+## Verified Context: Why Claude Code Matters
 
-Imagine you hire a very smart assistant. That assistant can:
-- Read and edit files on your computer
-- Run programs and check whether they work
-- Break a big problem into smaller steps and track their progress
-- Bring in specialized helpers when the task needs expertise
-- Save progress so nothing is lost if the computer restarts
+Public reporting (not audited financial statements) describes Claude Code's growth after its public launch in **May 2025**:
 
-This repository shows exactly how to build that kind of assistant, and explains why each piece is designed the way it is.
-
----
-
-## 📚 Article Series
-
-Each article in this series is self-contained. Start anywhere based on what you need.
-
-| # | Title | What You'll Build |
+| Milestone | Reported figure | Source |
 |---|---|---|
-| 1 | [The 4-Line Loop That Powers Claude Code](../article-1-core-agent-loop.md) | The core agent loop, tool dispatch, planning |
-| 2 | [Stop Bloating Your System Prompt](../article-2-knowledge-context.md) | Skill loading, context compression, task graphs |
-| 3 | [How Claude Code Runs a Whole AI Team](../article-3-multi-agent-teams.md) | Multi-agent coordination, mailboxes, Git worktrees |
-| 4 | [From Prototype to Production](../article-4-production-hardening.md) | Streaming, snapshots, permissions, event hooks |
-| 5 | [Near-Zero Latency with asyncio and Caching](../article-5-async-performance.md) | Async execution, interrupts, prompt caching, MCP |
-| 6 | [Enterprise-Grade AI Agents](../article-6-enterprise.md) | Redis mailboxes, worktree lifecycle, full assembly |
+| ~6 months post-launch | **$1B annualized run-rate revenue** | [VentureBeat](https://venturebeat.com/technology/anthropic-says-it-hit-a-30-billion-revenue-run-rate-after-crazy-80x-growth), [SaaStr](https://www.saastr.com/anthropic-just-hit-14-billion-in-arr-up-from-1-billion-just-14-months-ago/) |
+| February 2026 | **$2.5B+ annualized run-rate** for Claude Code specifically | [SaaStr](https://www.saastr.com/anthropic-just-hit-14-billion-in-arr-up-from-1-billion-just-14-months-ago/) |
+
+**Important caveats (read these):**
+- *Annualized run-rate* extrapolates recent performance over a full year — it is not the same as audited annual revenue.
+- Anthropic has stated that Claude Code drives a large share of company growth, but exact product-level breakdowns come from press reporting, not public filings.
+- This repository teaches the *engineering patterns* behind such products. It does not reproduce Anthropic's business results.
+
+What *is* documented by Anthropic directly: Claude Code is an agentic tool that reads codebases, edits files, runs commands, supports [MCP integrations](https://docs.anthropic.com/en/docs/claude-code/mcp), uses project-level instructions (`CLAUDE.md`), supports [agent teams](https://docs.anthropic.com/en/docs/claude-code/overview), and exposes an [Agent SDK](https://docs.anthropic.com/en/docs/claude-code/overview). This curriculum is organized around those publicly described capabilities.
 
 ---
 
-## ⚡ Quick Start
+## For Developers — What You'll Build
+
+Six phases, each adding one layer of capability:
+
+```
+Phase 1  →  Core agent loop (while True → model → tools → repeat)
+Phase 2  →  Context management (skills, compression, task graphs)
+Phase 3  →  Multi-agent coordination (mailboxes, worktrees, background tasks)
+Phase 4  →  Production hardening (snapshots, permissions, streaming, sessions)
+Phase 5  →  Performance (async parallelism, caching, interrupts, MCP)
+Phase 6  →  Enterprise scale (Redis mailboxes, worktree lifecycle)
+```
+
+Each phase is self-contained. Phase 1 alone is a functional coding agent. Phase 6 wires everything together in `combined_agent.py`.
+
+---
+
+## For Non-Developers — The Idea in Plain Language
+
+Imagine a skilled assistant that can:
+
+- Read and edit files on your computer
+- Run programs and verify they work
+- Break large tasks into steps and track progress
+- Delegate subtasks to specialized helpers working in parallel
+- Undo mistakes and follow rules you define in advance
+
+This repository shows *how software engineers build that kind of assistant* — not with magic, but with a loop, tools, and careful engineering around memory, safety, and coordination.
+
+---
+
+## Article Series
+
+Six self-contained articles — read in order or jump to what you need. Each links to runnable code and, where applicable, Anthropic's public documentation.
+
+| # | Article | Patterns | What you'll build |
+|---|---|---|---|
+| 1 | [The Core Agent Loop](articles/01-core-agent-loop.md) | 1–4 | While-loop agent, tools, planning, subagents |
+| 2 | [Stop Bloating Your System Prompt](articles/02-knowledge-context.md) | 5–7 | Skills, compression, task dependency graph |
+| 3 | [How Multi-Agent Teams Coordinate](articles/03-multi-agent-teams.md) | 8–12 | Background tasks, mailboxes, FSM, worktrees |
+| 4 | [From Prototype to Production](articles/04-production-hardening.md) | 13–17 | Streaming, snapshots, permissions, sessions |
+| 5 | [Async Performance and MCP](articles/05-async-performance.md) | 18–21 | Parallel tools, interrupts, caching, MCP |
+| 6 | [Enterprise-Grade Agent Fleets](articles/06-enterprise.md) | 22–23 | Redis mailboxes, worktree lifecycle, full assembly |
+
+**Visual reference:** [docs/PATTERN_MAP.md](docs/PATTERN_MAP.md) — diagram mapping all 23 patterns to code files and official Anthropic/MCP docs.
+
+---
+
+## Quick Start
 
 ```bash
-# 1. Clone the repo
 git clone https://github.com/dhsoni2510/claude-code-architecture
 cd claude-code-architecture
 
-# 2. Install dependencies
 pip install anthropic aiofiles pyyaml redis
 
-# 3. Set your API key
 export ANTHROPIC_API_KEY=your-key-here
-# Get one at: https://console.anthropic.com/
+# https://console.anthropic.com/
 
-# 4. Run the minimal agent (Phase 1)
 python phase1_core_loop/agent.py
 ```
 
-You should see the agent start, write a plan, execute tool calls step by step, and complete the task — all in your terminal.
+The agent lists Python files, reads one, and writes a summary to `summary.txt`.
+
+**Run any pattern in isolation:**
+
+```bash
+python phase1_core_loop/subagent.py          # Pattern 4
+python phase2_context_management/compressor.py # Pattern 6 (importable module)
+python phase4_production/streaming_agent.py    # Pattern 13
+python phase5_async_runtime/caching.py         # Pattern 20
+python phase6_enterprise/redis_mailbox.py      # Pattern 22 (needs Redis)
+```
+
+**End-to-end examples:**
+
+```bash
+python examples/run_code_review.py path/to/file.py
+python examples/run_feature_build.py
+python examples/run_refactor.py   # Git repo required; uses worktrees
+```
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
+
+Every pattern has exactly one primary file. If a file is listed here, it exists in the repo.
 
 ```
 claude-code-architecture/
 │
 ├── phase1_core_loop/
-│   ├── agent.py              # The minimal while-loop agent
-│   ├── tools.py              # Tool implementations + dispatch map
-│   ├── todo_tools.py         # TodoWrite planning pattern
-│   └── subagent.py           # Context-isolated subagent runner
+│   ├── agent.py              # Pattern 1 — minimal while-loop agent
+│   ├── tools.py              # Pattern 2 — tool dispatch map
+│   ├── todo_tools.py         # Pattern 3 — TodoWrite planning
+│   └── subagent.py           # Pattern 4 — context-isolated subagent
 │
 ├── phase2_context_management/
-│   ├── skill_loader.py       # On-demand skill loading
-│   ├── compressor.py         # Three-layer context compression
-│   ├── task_graph.py         # File-based dependency graph
-│   └── skills/               # Example skill files
+│   ├── skill_loader.py       # Pattern 5 — on-demand skill loading
+│   ├── compressor.py         # Pattern 6 — three-layer context compression
+│   ├── task_graph.py         # Pattern 7 — file-based dependency graph
+│   └── skills/
 │       ├── code_review.txt
 │       ├── security_audit.txt
 │       └── documentation.txt
 │
 ├── phase3_multi_agent/
-│   ├── background_tasks.py   # Background execution + notifications
-│   ├── mailbox.py            # JSONL agent mailboxes
-│   ├── fsm_protocol.py       # FSM communication protocol
-│   ├── self_assignment.py    # Pull-based task claiming
-│   └── worktree.py           # Git worktree isolation
+│   ├── background_tasks.py   # Pattern 8 — background execution + notifications
+│   ├── mailbox.py            # Pattern 9 — JSONL agent mailboxes
+│   ├── fsm_protocol.py       # Pattern 10 — FSM communication protocol
+│   ├── self_assignment.py    # Pattern 11 — pull-based task claiming
+│   └── worktree.py           # Pattern 12 — Git worktree isolation
 │
 ├── phase4_production/
-│   ├── streaming_agent.py    # Real-time token streaming
-│   ├── snapshots.py          # File snapshot + revert system
-│   ├── permissions.py        # YAML permission governance
-│   ├── event_bus.py          # Lifecycle event bus
-│   ├── session_store.py      # Session persistence + fork
-│   └── permissions.yaml      # Example permission policy
+│   ├── streaming_agent.py    # Pattern 13 — real-time token streaming
+│   ├── snapshots.py          # Pattern 14 — reversible file writes
+│   ├── permissions.py        # Pattern 15 — YAML permission governance
+│   ├── event_bus.py          # Pattern 16 — lifecycle event bus
+│   ├── session_store.py      # Pattern 17 — session persistence + fork
+│   └── permissions.yaml
 │
 ├── phase5_async_runtime/
-│   ├── async_agent.py        # Parallel tool execution
-│   ├── interrupt.py          # Real-time interrupt injection
-│   ├── caching.py            # Prompt cache configuration
-│   └── mcp_registry.py       # MCP tool registry
+│   ├── async_agent.py        # Pattern 18 — parallel tool execution
+│   ├── interrupt.py          # Pattern 19 — real-time interrupt injection
+│   ├── caching.py            # Pattern 20 — prompt cache configuration
+│   └── mcp_registry.py       # Pattern 21 — MCP tool registry
 │
 ├── phase6_enterprise/
-│   ├── redis_mailbox.py      # Redis Streams mailbox
-│   ├── worktree_lifecycle.py # Full worktree lifecycle manager
-│   └── combined_agent.py     # All 23 patterns in one entry point
+│   ├── redis_mailbox.py      # Pattern 22 — Redis Streams mailboxes
+│   ├── worktree_lifecycle.py # Pattern 23 — worktree lifecycle manager
+│   └── combined_agent.py     # All patterns wired together
 │
 ├── examples/
-│   ├── run_code_review.py    # End-to-end: multi-agent code review
-│   ├── run_feature_build.py  # End-to-end: build a feature with tests
-│   └── run_refactor.py       # End-to-end: parallel codebase refactor
+│   ├── run_code_review.py
+│   ├── run_feature_build.py
+│   └── run_refactor.py
 │
+├── articles/                 # 6-part educational article series
+│   ├── 01-core-agent-loop.md
+│   ├── 02-knowledge-context.md
+│   ├── 03-multi-agent-teams.md
+│   ├── 04-production-hardening.md
+│   ├── 05-async-performance.md
+│   └── 06-enterprise.md
+│
+├── docs/
+│   └── PATTERN_MAP.md        # Pattern → code → Anthropic doc links
+│
+├── LICENSE
 └── README.md
 ```
 
 ---
 
-## 🔍 Code Walkthrough
+## Code Walkthrough
 
-### Phase 1: The Core Loop (Start Here)
+### Phase 1 — The Core Loop
 
-The entire foundation is a `while True` loop with three steps: call the model, check if it's done, execute any tools it requested.
+The entire foundation is a `while True` loop: call the model, check if done, execute tools, repeat.
 
 ```python
 # phase1_core_loop/agent.py
@@ -163,184 +214,172 @@ while True:
     messages.append({"role": "assistant", "content": response.content})
 
     if response.stop_reason == "end_turn":
-        return  # Task complete
+        return
 
-    # Execute each tool the model called
     tool_results = [dispatch(block) for block in response.content if block.type == "tool_use"]
     messages.append({"role": "user", "content": tool_results})
 ```
 
-**Why it works:** The model decides what to do. The harness executes it. The result goes back to the model. Repeat until done.
+The model decides. The harness executes. Results feed back. Repeat until done.
 
-### Phase 2: Smart Context Management
+### Phase 2 — Context That Scales
 
-Every long session eventually runs out of context. The compressor continuously trims old content without losing active state:
+Long sessions hit context limits. The compressor applies three layers:
 
 ```python
 # phase2_context_management/compressor.py
 # Layer 1: Summarize old conversation clusters
-# Layer 2: Truncate giant tool outputs (keep head + tail)  
-# Layer 3: Keep only deltas — what changed, not what stayed the same
+# Layer 2: Truncate oversized tool outputs (head + tail)
+# Layer 3: Replace duplicate file reads with delta references
 messages = compress_messages(messages, client)
 ```
 
-### Phase 3: Agent Teams
+Skills load domain knowledge only when needed — the same idea behind Claude Code's [skills](https://docs.anthropic.com/en/docs/claude-code/overview) and project instruction files.
 
-Multiple specialists run in parallel, each in an isolated Git worktree, communicating through mailboxes:
+### Phase 3 — Agent Teams
+
+Specialists run in parallel, each in an isolated Git worktree, communicating through mailboxes:
 
 ```python
 # phase3_multi_agent/background_tasks.py
-# Spawn a background agent for a subtask
 run_background_task("security-audit", "Check auth.py for vulnerabilities", tools, handlers)
 
-# The master agent checks for completions on each turn
 for result in check_notifications():
-    print(f"Background task '{result['task_id']}' done: {result['result']}")
+    print(f"Background task '{result['task_id']}' done")
 ```
 
-### Phase 4: Production Safety
+Anthropic documents [agent teams and background agents](https://docs.anthropic.com/en/docs/claude-code/overview) as first-class Claude Code features. This phase shows the coordination primitives those features require underneath.
 
-Every file write is reversible. Every tool call is governed by a YAML policy. Every action is observable through the event bus:
+### Phase 4 — Production Safety
+
+Every file write can be reversed. Every tool call is governed by YAML policy. Actions emit events for observability:
 
 ```python
 # phase4_production/snapshots.py
-def tool_safe_write(args):
-    snapshot_before_write(args["path"])   # automatic backup
-    Path(args["path"]).write_text(args["content"])
-    # → call revert_file() at any point to undo
-
-# phase4_production/permissions.yaml  
-rules:
-  - tool: run_shell
-    command_pattern: "rm|del"
-    path_pattern: ".*(prod|production).*"
-    action: deny
-    reason: "No destructive commands in production paths"
+snapshot_before_write(args["path"])
+Path(args["path"]).write_text(args["content"])
+# → revert_file() undoes the write at any time
 ```
 
-### Phase 5: Async Performance
+### Phase 5 — Speed and Extensibility
 
-Run all tool calls in a single turn concurrently instead of sequentially:
+Tool calls in one model turn run concurrently. Stable context is cached. MCP servers extend the tool set without code changes:
 
 ```python
 # phase5_async_runtime/async_agent.py
-# OLD: 5 tool calls × 3 seconds each = 15 seconds
-# NEW: 5 tool calls running in parallel = 3 seconds
+tool_results = await asyncio.gather(*[execute_tool(block) for block in tool_blocks])
 
-tool_results = await asyncio.gather(
-    *[execute_tool(block) for block in tool_blocks]
-)
+# phase5_async_runtime/caching.py — uses Anthropic prompt caching API
+# phase5_async_runtime/mcp_registry.py — loads tools from MCP exports
 ```
 
-### Phase 6: Enterprise Scale
+Anthropic's [prompt caching docs](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching) describe the cost mechanism. Exact savings depend on your workload — this repo shows *how* to enable caching, not a guaranteed percentage.
 
-Redis streams replace local file mailboxes for distributed agent fleets:
+### Phase 6 — Distributed Scale
+
+Redis Streams replace local JSONL mailboxes when agents run across machines:
 
 ```python
 # phase6_enterprise/redis_mailbox.py
-await mailbox.send(to_agent="reviewer", from_agent="coordinator", 
+await mailbox.send(to_agent="reviewer", from_agent="coordinator",
                    message={"type": "review_request", "file": "auth.py"})
-
-# Reviewer picks it up on any machine in the cluster
-async for msg_id, envelope in mailbox.receive("reviewer", "worker-1"):
-    await process_review(envelope)
-    await mailbox.acknowledge("reviewer", msg_id)
 ```
 
 ---
 
-## 🗺️ The 23 Patterns at a Glance
+## The 23 Patterns
 
-| # | Pattern | Phase | What Problem It Solves |
-|---|---|---|---|
-| 1 | Minimal while loop | 1 | Gives the model a reasoning-execution cycle |
-| 2 | Tool dispatch map | 1 | Extensible tool routing without if/elif chains |
-| 3 | TodoWrite planning | 1 | Structured pre-execution plans for complex tasks |
-| 4 | Subagent isolation | 1 | Focused, cost-efficient subtask execution |
-| 5 | On-demand skill loading | 2 | Lean system prompts that don't waste tokens |
-| 6 | Context compression | 2 | Long sessions without hitting the context limit |
-| 7 | Task dependency graph | 2 | Task state that survives restarts and context resets |
-| 8 | Background tasks | 3 | Non-blocking execution of long-running subtasks |
-| 9 | JSONL mailboxes | 3 | Persistent async communication between agents |
-| 10 | FSM protocol | 3 | Structured multi-agent state transitions |
-| 11 | Autonomous self-assignment | 3 | Agents claim work without a central coordinator |
-| 12 | Git worktree isolation | 3 | Parallel agents on the same codebase, no conflicts |
-| 13 | Real-time streaming | 4 | Visibility into model reasoning as it happens |
-| 14 | File snapshots | 4 | Every write is reversible — no accidental data loss |
-| 15 | YAML permissions | 4 | Declarative policy without hard-coded guards |
-| 16 | Event bus | 4 | Observability without coupling to tool implementations |
-| 17 | Session persistence | 4 | Long-running agents survive crashes and restarts |
-| 18 | Parallel tool execution | 5 | 3–10x faster per-turn execution |
-| 19 | Interrupt injection | 5 | Real-time user control over running agents |
-| 20 | Prompt caching | 5 | 60–90% cost reduction for stable context |
-| 21 | MCP integration | 5 | Zero-code tool discovery via open standard |
-| 22 | Redis mailboxes | 6 | Distributed agents across multiple machines |
-| 23 | Worktree lifecycle | 6 | Automatic cleanup of parallel branches at scale |
+Each row links a pattern to its implementation file and the problem it solves. "Public doc" indicates where Anthropic describes related product behavior.
+
+| # | Pattern | File | Problem it solves | Public doc reference |
+|---|---|---|---|---|
+| 1 | Minimal while loop | `phase1_core_loop/agent.py` | Reasoning–execution cycle | Agent SDK / tool use |
+| 2 | Tool dispatch map | `phase1_core_loop/tools.py` | Extensible tool routing | Tool use API |
+| 3 | TodoWrite planning | `phase1_core_loop/todo_tools.py` | Structured multi-step plans | — |
+| 4 | Subagent isolation | `phase1_core_loop/subagent.py` | Focused subtasks, smaller context | Agent teams |
+| 5 | On-demand skill loading | `phase2_context_management/skill_loader.py` | Lean system prompts | Skills / CLAUDE.md |
+| 6 | Context compression | `phase2_context_management/compressor.py` | Long sessions within limits | — |
+| 7 | Task dependency graph | `phase2_context_management/task_graph.py` | Durable task state on disk | — |
+| 8 | Background tasks | `phase3_multi_agent/background_tasks.py` | Non-blocking subtasks | Background agents |
+| 9 | JSONL mailboxes | `phase3_multi_agent/mailbox.py` | Persistent agent messaging | — |
+| 10 | FSM protocol | `phase3_multi_agent/fsm_protocol.py` | Structured state transitions | — |
+| 11 | Self-assignment | `phase3_multi_agent/self_assignment.py` | Pull-based work claiming | Agent teams |
+| 12 | Git worktree isolation | `phase3_multi_agent/worktree.py` | Parallel edits, no conflicts | — |
+| 13 | Real-time streaming | `phase4_production/streaming_agent.py` | Visible model output | Messages streaming API |
+| 14 | File snapshots | `phase4_production/snapshots.py` | Reversible writes | — |
+| 15 | YAML permissions | `phase4_production/permissions.py` | Declarative tool policy | Permissions / hooks |
+| 16 | Event bus | `phase4_production/event_bus.py` | Decoupled observability | Hooks |
+| 17 | Session persistence | `phase4_production/session_store.py` | Crash-safe resume + fork | Session continuity |
+| 18 | Parallel tool execution | `phase5_async_runtime/async_agent.py` | Faster multi-tool turns | — |
+| 19 | Interrupt injection | `phase5_async_runtime/interrupt.py` | Mid-run user redirection | — |
+| 20 | Prompt caching | `phase5_async_runtime/caching.py` | Lower cost for stable context | Prompt caching API |
+| 21 | MCP integration | `phase5_async_runtime/mcp_registry.py` | External tool discovery | MCP docs |
+| 22 | Redis mailboxes | `phase6_enterprise/redis_mailbox.py` | Cross-machine agent fleets | — |
+| 23 | Worktree lifecycle | `phase6_enterprise/worktree_lifecycle.py` | Automated branch cleanup | — |
 
 ---
 
-## 🔗 What You Need
+## Requirements
 
-- Python 3.11+
-- An [Anthropic API key](https://console.anthropic.com/) (Phases 1–5 only need this)
-- Redis 7+ (Phase 6 only — for distributed mailboxes)
-- Git 2.20+ (Phase 3+ — for worktree support)
+| Dependency | Phases | Notes |
+|---|---|---|
+| Python 3.11+ | All | |
+| [Anthropic API key](https://console.anthropic.com/) | 1–5 | Required for model calls |
+| Redis 7+ | 6 | Optional; `docker run -p 6379:6379 redis` |
+| Git 2.20+ | 3, 6, examples | Required for worktree patterns |
 
-Optional but recommended:
 ```bash
-pip install aiofiles pyyaml redis rich   # async files, YAML, Redis, pretty output
+pip install anthropic aiofiles pyyaml redis
 ```
 
 ---
 
-## 💡 Common Questions
+## Common Questions
 
-**Q: Do I need all 23 patterns for a useful agent?**  
-No. Phase 1 alone gives you a functional coding agent. Add phases as your use case demands them.
+**Do I need all 23 patterns?**  
+No. Phase 1 is a working agent. Add phases as your use case requires them.
 
-**Q: Does this only work with Claude?**  
-The patterns are model-agnostic. The tool-calling API shapes are specific to Anthropic's SDK, but the architecture applies to any model that supports tool use (GPT-4, Gemini, etc.) with minor adapter changes.
+**Does this only work with Claude?**  
+The patterns are model-agnostic. This repo uses Anthropic's tool-calling API; other models with tool support need adapter changes.
 
-**Q: Is this safe to run on my actual codebase?**  
-By Phase 4 (with snapshots and YAML permissions), yes — every file write is reversible and the agent is constrained by the policy you declare. Before Phase 4, treat it as a sandbox.
+**Is it safe on a real codebase?**  
+With Phase 4 (snapshots + YAML permissions), writes are reversible and tool calls are policy-governed. Earlier phases should be treated as learning sandboxes.
 
-**Q: How much does it cost per task?**  
-With Phase 5 prompt caching enabled, a medium-complexity task (10–30 tool calls) typically costs $0.02–$0.15 using Claude Sonnet. Without caching, expect 3–5x higher.
+**How much does a task cost?**  
+Cost depends on model, task length, and whether prompt caching is enabled. Run your own tasks and inspect `response.usage` — this repo does not publish cost guarantees.
 
 ---
 
-## 🤝 Contributing
+## Further Reading
 
-Contributions are welcome:
+**In this repo:**
+- [Pattern Map](docs/PATTERN_MAP.md) — all 23 patterns with code paths and doc links
+- [Article Series](articles/01-core-agent-loop.md) — start at Article 1
 
-- **Bug fixes** — open an issue with a minimal repro
+**Official Anthropic documentation:**
+- [Claude Code overview](https://docs.anthropic.com/en/docs/claude-code/overview)
+- [Tool use / agentic loop](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview)
+- [Anthropic Messages API](https://docs.anthropic.com/en/api/messages)
+- [Prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching)
+- [Claude Code hooks](https://docs.anthropic.com/en/docs/claude-code/hooks)
+- [Model Context Protocol](https://modelcontextprotocol.io)
+
+---
+
+## Contributing
+
+- **Bug fixes** — open an issue with a minimal reproduction
 - **New examples** — add a runnable script to `examples/`
-- **New patterns** — if you've found an architectural pattern that extends Phase 6, open a discussion
+- **Accuracy corrections** — if a claim here doesn't match the code or a public source, please open an issue with the reference
 
-Please keep code examples self-contained and runnable without external services (except Phase 6 Redis examples).
-
----
-
-## 📖 Further Reading
-
-- [Anthropic API documentation](https://docs.anthropic.com)
-- [Model Context Protocol (MCP) specification](https://modelcontextprotocol.io)
-- [Claude Code documentation](https://docs.anthropic.com/claude-code)
-
----
-
-## ⭐ If This Helped You
-
-Star the repo. It takes 2 seconds and helps other developers find this when they're searching for "how to build a production AI agent."
-
-Share the article series. Each article is standalone — if one phase is what someone needs, that's enough.
+Keep examples self-contained. Phase 6 Redis examples may require a running Redis instance.
 
 ---
 
 <div align="center">
 
-**Built by [Dharmik Soni](https://github.com/dhsoni2510) · Based on analysis of Claude Code's public architecture**
+**Built by [Dharmik Soni](https://github.com/dhsoni2510)**
 
-*"The architecture is the moat, not the model."*
+*Educational reimplementation based on publicly documented agent-engineering patterns — not Anthropic proprietary code.*
 
 </div>

@@ -1,0 +1,9 @@
+# Documentation Skill
+
+When writing or updating documentation:
+
+1. Read the target file or module first — never document from memory alone.
+2. Use clear headings, short paragraphs, and runnable code examples.
+3. State what is verified vs. what is illustrative.
+4. Link to official sources when describing external products or APIs.
+5. Keep README sections in sync with files that actually exist in the repo.

@@ -1,0 +1,17 @@
+[
+  {
+    "name": "fetch_url",
+    "description": "Fetch the text content of a URL (example MCP tool).",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ]
+    }
+  }
+]
