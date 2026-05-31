@@ -27,6 +27,12 @@ htmlcov/
 .file_snapshots/
 .agent_mailboxes/
 .task_graph.json
+.agent_todo.json
+.combined_demo/
+.worktrees/
+.worktree_registry.json
+audit.log
+comparison.txt
 summary.txt
 src/
 tests/test_calculator.py
