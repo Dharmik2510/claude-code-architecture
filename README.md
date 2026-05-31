@@ -50,7 +50,7 @@ Phase 5  →  Performance (async parallelism, caching, interrupts, MCP)
 Phase 6  →  Enterprise scale (Redis mailboxes, worktree lifecycle)
 ```
 
-Each phase is self-contained. Phase 1 alone is a functional coding agent. Phase 6 wires everything together in `combined_agent.py`.
+Each phase is self-contained. Phase 1 alone is a functional coding agent. `phase6_enterprise/combined_agent.py` invokes **all 23 patterns** and prints a coverage report — degrading gracefully (offline patterns always run; Git, Redis, and model-dependent patterns run when their prerequisites are present, and anything skipped is reported with the reason).
 
 ### The Minimum Production Baseline
 

@@ -93,6 +93,10 @@ GRAPH_FILE = SANDBOX / "task_graph.json"
 
 def teardown_sandbox() -> None:
     shutil.rmtree(SANDBOX, ignore_errors=True)
+    # Remove the empty .worktrees/ base dir created on import (if nothing's in it).
+    base = worktree_lifecycle.WORKTREE_BASE
+    if base.exists() and not any(base.iterdir()):
+        base.rmdir()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
